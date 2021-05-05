@@ -20,6 +20,7 @@ extern vitesse_tempo ;
 extern Coord_X_absolu ;
 extern Coord_Y_absolu ;
 extern Angle_absolu ;
+extern Angle_relatif ;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -162,11 +163,8 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 //------------------------------------------------------------------------------------
 			case Depl_Coord :
 //----------- CALCUL DE L'ANGLE DE DEPLACEMENT -----------------------------------
-					alpha = (180/PI)*atan2( command.Coord_Y, command.Coord_X );	//calcul de l'angle de triangle de déplacement au format trigo en degré
-					//si on est dans le cas du 1er dep, on check l'orientation initiale
-					if( (Coord_X_absolu == commande.Pos_Coord_X) && (Coord_Y_absolu == commande.Pos_Coord_Y) ){
-							alpha -= Angle_absolu ;
-					}
+					alpha = (180/PI)*atan2( command.Coord_X, command.Coord_Y );	//calcul de l'angle de triangle de déplacement au format trigo en degré
+					//alpha = alpha - Angle_relatif ; //convertion pour avoir l'angle réel de rotation par rapport à l'orientation de la base
 					x.Vitesse_Mot1 = 160*0.05 ;			//on initialise la vitesse	
 					x.Vitesse_Mot2 = 160*0.05 ;			//qui sera de 5% pour tout le déplacement
 					if(alpha < 0 ){		//si alpha négatif donc rotation à droite	
@@ -195,7 +193,7 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 					while (FO_M2(x).Read_Pids != 0 ){} ;  //on attend la fin du dep
 //----------- ORIENTATION FINALE DE LA BASE SELON L'ANGLE DESIRE -------------------- 
 					alpha = commande.Angle - alpha ;	//calcul angle de déplacement pour arriver à l'orientation finale demandée
-					Angle_absolu += commande.Angle ;	//on calcul et stocke l'angle absolu de la base
+					//Angle_relatif = commande.Angle ; 	//on enregistre l'orientation de la base pour un prochain déplacement
 					if(alpha < 0 ){		//si alpha négatif donc rotation à droite	
 							x.Ticks_mot1 = -abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;					
 							x.Ticks_mot2 = abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;

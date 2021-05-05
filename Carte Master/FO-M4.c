@@ -12,8 +12,8 @@
 #include "FO-M4.h"
 
 sbit  TRIGGER_AV = P2^0; //Avant
-sbit	ECHO1 		= P2^2;
 sbit  TRIGGER_AR = P2^1; //Arrière
+sbit	ECHO1 		= P2^2;
 sbit	ECHO2 		= P2^3;
 sbit	TIMER4 		= P2^4;
 

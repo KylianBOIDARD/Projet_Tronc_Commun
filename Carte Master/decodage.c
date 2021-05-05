@@ -23,6 +23,7 @@ int vitesse_tempo = 0 ;
 int Coord_X_absolu = 0;
 int Coord_Y_absolu = 0;
 int Angle_absolu = 0;
+int Angle_relatif = 0 ;
 int commande_enable = 0;
 	
 /**
@@ -285,7 +286,7 @@ int traitement_commande()
 							commande.Coord_X = cTOi(commande_a_decoder[indX+1]);
 							commande.Coord_Y = cTOi(commande_a_decoder[indY+1]);
 							commande.Angle = cTOi(commande_a_decoder[indA+1]);
-						}
+						} 
 						return 1;
 		}
 		else if(!strcmp(commande_a_decoder[0],"ASS"))
@@ -324,7 +325,8 @@ int traitement_commande()
 						commande.Pos_Coord_Y = cTOi(commande_a_decoder[indY+1]);
 						Coord_Y_absolu = commande.Pos_Coord_Y ;
 						commande.Pos_Angle = cTOi(commande_a_decoder[indA+1]);
-						Angle_absolu = commande.Pos_Angle ;
+						Angle_relatif = commande.Pos_Angle ;
+						Angle_absolu = Angle_relatif ; 
 						return 1;
 					}
 		}

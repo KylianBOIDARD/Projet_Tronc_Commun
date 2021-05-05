@@ -69,7 +69,7 @@ unsigned char CDE_Servo_H (int Angle){ //Angle de -90° à 90°
 
 void configPCA (void) {
 //Gestion crossbar
-XBR0 |= 0x08; // enable CEX0 at good Port
+XBR0 |= 0x08; // enable CEX0 at P0.0
 
 // configuration du PCA
 PCA0MD = 0x00; // System clock divided by 12
