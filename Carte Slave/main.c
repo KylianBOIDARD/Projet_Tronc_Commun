@@ -25,7 +25,7 @@ void main (void) {
 	
 //---- PHASE D'UTILISATION CONTINUE ------------------------------------	
 		while(1){
-		
+				FF_S6();
 		}
 	
 }

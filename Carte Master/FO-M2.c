@@ -31,8 +31,6 @@ char Flag_RX = 0 ;														//flag de fin de reception
 void Init_FOM2(void){
 		//Init_Timer1();
 		Init_UART1();
-	send_command("mogo 1:10 2:10");
-	
 }
 //---------- FONCTION PRINCIPALE DU SOUS ENSEMBLE -----------------------------
 INFORMATIONS_SERIALIZER FO_M2(COMMANDES_SERIALIZER x){	

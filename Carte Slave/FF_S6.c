@@ -14,9 +14,22 @@
 //-----------------------------------------------------------------------------
 #include "FF_SX.h"
 
+char commande_recue = 0 ;
 
 void FF_S6(void){
-
+		if(commande_recue == 2){
+				/*switch (ID de la commande){
+        	case:
+        		break;
+        	case:
+        		break;
+        	default:
+        		break;
+        }*/
+			
+			
+				commande_recue == 0 ;
+		}
 		
 	
 }

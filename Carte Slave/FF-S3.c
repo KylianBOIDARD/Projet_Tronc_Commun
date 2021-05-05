@@ -36,8 +36,6 @@ float AncienAngle = 0;
 float temps_deplacement;
 float temps_rotation;
 float dutycycle;
-int i = 0;
-int Angle=90;
 
 //----- FONCTION INITIALISATION -----------------------------------------------
 void Init_FF_S3(void){
@@ -54,7 +52,7 @@ char FF_S3 (int Angle){
 }
 
 //-----------------------------------------------------------------------------
-// CDE_Servo_H
+// CDE_Servo_V
 //-----------------------------------------------------------------------------
 
 unsigned char CDE_Servo_V (int Angle){ //Angle ira de -90° à 90°

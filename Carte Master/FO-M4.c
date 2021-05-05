@@ -11,10 +11,10 @@
 // Utilisation du télémètre Ultrasons
 #include "FO-M4.h"
 
-sbit  TRIGGER_AV = P2^0; //Avant
-sbit	ECHO1 		= P2^2;
-sbit  TRIGGER_AR = P2^1; //Arrière
-sbit	ECHO2 		= P2^3;
+sbit  TRIGGER_AV = P1^1; //Avant
+sbit	ECHO1 		= P3^6;
+sbit  TRIGGER_AR = P1^2; //Arrière
+sbit	ECHO2 		= P3^7;
 sbit	TIMER4 		= P2^4;
 
 

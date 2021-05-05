@@ -46,10 +46,10 @@ void Oscillator_Init_Quartz()
 
 void Port_IO_Init()
 {
-    // P0.0  -  Unassigned, Open-Drain, Digital
-    // P0.1  -  Unassigned, Open-Drain, Digital
-    // P0.2  -  Unassigned, Open-Drain, Digital
-    // P0.3  -  Unassigned,  Open-Drain, Digital
+    // P0.0  -  SCK, Open-Drain, Digital
+    // P0.1  -  MISO, Push-Pull, Digital
+    // P0.2  -  MOSI, Open-Drain, Digital
+    // P0.3  -  NSS,  Open-Drain, GND 
     // P0.4  -  Unassigned,  Open-Drain, Digital
     // P0.5  -  Unassigned,  Open-Drain, Digital
     // P0.6  -  Unassigned,  Open-Drain, Digital
@@ -91,7 +91,12 @@ void Port_IO_Init()
 		P1MDOUT |= 0x40;
 
 //----- FF_S2 ------------------------
-		
+
+//----- FF_MS1 ------------------------
+		//config du port 0 en push pull et open drain comme il faut
+
+
+
 }
 
 //----------------------------------------------------------------------------------

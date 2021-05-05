@@ -39,8 +39,8 @@ struct COMMANDES
    enum  Mouvement Etat_Mouvement; //Contient le type de mouvement demandé - Commandes "A" "B" "S" "RD" "RG" "RC" "RA" "G"
                                    // Paramètres des commandes précédentes:     
    BYTE  Vitesse;                  // Paramètre vitesse - Peut aussi être modifié par la commande "TV"
-   SIGNED_BYTE  Coord_X;	                 // Paramètre coordonnée X
-   SIGNED_BYTE  Coord_Y;                  // Paramètre coordonnée Y
+   BYTE  Coord_X;	                 // Paramètre coordonnée X
+   BYTE  Coord_Y;                  // Paramètre coordonnée Y
    int   Angle;                    // Paramètre angle
    
    enum  ACQ_Son Etat_ACQ_Son;     // Contient la commande d'acquisition de signaux sonores "ASS"

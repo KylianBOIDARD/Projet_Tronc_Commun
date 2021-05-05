@@ -20,6 +20,7 @@ extern vitesse_tempo ;
 extern Coord_X_absolu ;
 extern Coord_Y_absolu ;
 extern Angle_absolu ;
+extern Angle_relatif ;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -33,6 +34,7 @@ void FO_M6( void ){
 			}
 			if ( commande.Etat_DCT_Obst != DCT_non ){						//si elle demande une detection d'obstacle
 					command_Telemetre();
+					commande.Etat_DCT_Obst = DCT_non ;
 				
 			}
 			if ( commande.Etat_Servo != BUT_Servo_non ){		//demande un mouvement du servomoteur
@@ -43,11 +45,22 @@ void FO_M6( void ){
         		infos.Etat_BUT_Servo = BUT_Servo_H ;
 						break;
         	case Servo_V:
+						//appel à carte slave FFS3
+						//send_slave(0);
         		break;
         	default:
         		break;
         }
 				commande.Etat_Servo = BUT_Servo_non ;
+			}
+			if (commande.Etat_Lumiere != Lumiere_non){
+					//appel à carte slave FFS1
+					send_slave(1);
+			
+			}
+			if(commande.Etat_Photo != Photo_non){
+					//appel à carte slave FFS4
+					//send_slave(2);
 			}
 
 	
@@ -162,7 +175,7 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 //------------------------------------------------------------------------------------
 			case Depl_Coord :
 //----------- CALCUL DE L'ANGLE DE DEPLACEMENT -----------------------------------
-					alpha = (180/PI)*atan2( command.Coord_Y, command.Coord_X );	//calcul de l'angle de triangle de déplacement au format trigo en degré
+					alpha = (180/PI)*atan2( command.Coord_X, command.Coord_Y );	//calcul de l'angle de triangle de déplacement au format trigo en degré
 					//si on est dans le cas du 1er dep, on check l'orientation initiale
 					if( (Coord_X_absolu == commande.Pos_Coord_X) && (Coord_Y_absolu == commande.Pos_Coord_Y) ){
 							alpha -= Angle_absolu ;
@@ -195,7 +208,7 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 					while (FO_M2(x).Read_Pids != 0 ){} ;  //on attend la fin du dep
 //----------- ORIENTATION FINALE DE LA BASE SELON L'ANGLE DESIRE -------------------- 
 					alpha = commande.Angle - alpha ;	//calcul angle de déplacement pour arriver à l'orientation finale demandée
-					Angle_absolu += commande.Angle ;	//on calcul et stocke l'angle absolu de la base
+					//Angle_relatif = commande.Angle ; 	//on enregistre l'orientation de la base pour un prochain déplacement
 					if(alpha < 0 ){		//si alpha négatif donc rotation à droite	
 							x.Ticks_mot1 = -abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;					
 							x.Ticks_mot2 = abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;
