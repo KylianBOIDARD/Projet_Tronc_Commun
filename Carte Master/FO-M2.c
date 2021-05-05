@@ -18,9 +18,9 @@
 //-----------------------------------------------------------------------------
 //---------------- Variables Globales -----------------------------------------
 //-----------------------------------------------------------------------------
-INFORMATIONS_SERIALIZER Reponse_Serial ;			//variable ï¿½ renvoyer ï¿½ FO-M6
+INFORMATIONS_SERIALIZER Reponse_Serial ;			//variable à renvoyer à FO-M6
 INFORMATIONS_SERIALIZER empty = {0};
-char command_to_transmit[40] = {0};						//variable contenant la commande a transmettre ï¿½ Serializer
+char command_to_transmit[40] = {0};						//variable contenant la commande a transmettre à Serializer
 char reponse[40] ;														//variable contenant la reponse de Serializer
 char Flag_TX = 0 ;														//flag de fin de transmission
 char Reponse_Recue = 1 ;											//flag pour savoir si la reponse complete de Seria est recue
@@ -31,20 +31,18 @@ char Flag_RX = 0 ;														//flag de fin de reception
 void Init_FOM2(void){
 		//Init_Timer1();
 		Init_UART1();
-	send_command("mogo 1:10 2:10");
-	
 }
 //---------- FONCTION PRINCIPALE DU SOUS ENSEMBLE -----------------------------
 INFORMATIONS_SERIALIZER FO_M2(COMMANDES_SERIALIZER x){	
 
 		Reponse_Serial = empty ; 
-		create_command(x);									//on crï¿½e la commande qui correspond ï¿½ celle demandï¿½e en parametre
-		vider_chaine(reponse);							//on s'assure d'avoir une variable reponse vide pour acceuillir la nouvelle reponse ï¿½ la commande envoyï¿½e
-		send_command(command_to_transmit);	//on envoie la commande ï¿½ Serializer
-		wait_for_answer();									//on attend la reponse de Serializer si nï¿½cessaire
-		create_infos() ;										//on transforme la reponse reï¿½ue dans le bon format
+		create_command(x);									//on crée la commande qui correspond à celle demandée en parametre
+		vider_chaine(reponse);							//on s'assure d'avoir une variable reponse vide pour acceuillir la nouvelle reponse à la commande envoyée
+		send_command(command_to_transmit);	//on envoie la commande à Serializer
+		wait_for_answer();									//on attend la reponse de Serializer si nécessaire
+		create_infos() ;										//on transforme la reponse reçue dans le bon format
 	
-		return Reponse_Serial ;								//on retourne la variable de type INFORMATIONS_SERIALIZER ï¿½ FO-M6
+		return Reponse_Serial ;								//on retourne la variable de type INFORMATIONS_SERIALIZER à FO-M6
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -67,7 +65,7 @@ void Init_UART1(void){
 //---------- Fonction Interrupt UART1 ----------------------------------
 void Uart1_int(void) interrupt 20 {
 		if ( SCON1 & (1<<0) ){				//on regarde s'il s'agit d'une reception
-				recup_infos();						//on appelle la fonction pour recuperer le caractere reï¿½u
+				recup_infos();						//on appelle la fonction pour recuperer le caractere reçu
 				Flag_RX = 1 ;							// Flag de fin de reception d'un caractere
 		}
 		else{
@@ -77,7 +75,7 @@ void Uart1_int(void) interrupt 20 {
 }
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-//--------- Crï¿½ation d'une commande au format Serializer --------------------------
+//--------- Création d'une commande au format Serializer --------------------------
 void create_command(COMMANDES_SERIALIZER x){
 		char i = 0 ;
 	  char var[10] = {0} ;
@@ -267,10 +265,10 @@ void create_command(COMMANDES_SERIALIZER x){
 		}
 }
 //----------------------------------------------------------------------------------------------				
-//---------- Fonction d'envoi de la commande ï¿½ la carte Serializer -----------------------------
+//---------- Fonction d'envoi de la commande à la carte Serializer -----------------------------
 void send_command(char *x) {
 		char i = 0 ;
-		while (*(x+i) != '\0') {			//on parcourt la chaine tant que le caractï¿½re reï¿½u n'est pas le caractere de fin \0 
+		while (*(x+i) != '\0') {			//on parcourt la chaine tant que le caractère reçu n'est pas le caractere de fin \0 
 				SBUF1 = *(x+i) ;					//on charge le buffer de l'UART avec le caractere
 				i++ ;	
 				while ( Flag_TX == 0){}		//on attends que le flag de transmission soit set par l'uart
@@ -279,14 +277,14 @@ void send_command(char *x) {
 }
 //---------------------------------------------------------------------------------------
 //---------------- Fonction d'attente de reception de la reponse de Serializer --------------
-void wait_for_answer(void){				//on verifie maintenant si on attend une reponse ou non pour la commande envoyï¿½e
+void wait_for_answer(void){				//on verifie maintenant si on attend une reponse ou non pour la commande envoyée
 		//if ( Reponse_Serial.Etat_Response != Reponse_non ){			//on attend une reponse
 				while( Reponse_Recue != 0 ){}						//la boucle permet de laisser le temps aux interruptions d'intervenir
 				Reponse_Recue = 1 ;
 		//}
 }
 //-------------------------------------------------------------------------------------------------
-//----------- Fonction rï¿½cupï¿½ration informations Serializer ---------------------------------------------				
+//----------- Fonction récupération informations Serializer ---------------------------------------------				
 void recup_infos(void){
 		if ( SBUF1 == '\r' && strlen(reponse) != 0 ){
 					//Reponse_Recue = 0 ;

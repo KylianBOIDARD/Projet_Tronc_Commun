@@ -23,5 +23,5 @@ void MES_Dist_AR (void);
 void Trigger_AV (void);
 void Trigger_AR (void);
 void Timer4_ISR (void) ;
-unsigned int convert (void);
+unsigned int convert (int);
 

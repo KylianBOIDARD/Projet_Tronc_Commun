@@ -42,7 +42,7 @@ void Init_FO_M3(void){
 //-----------------------------------------------------------------------------
 //------ FONCTION PRINCIPALE DE FO-M3 --------------------------------------
 
-unsigned char FO_M3 (int Angle){
+unsigned int FO_M3 (int Angle){
 		//Recoit l'angle en ASCII, retourne le temps mis par le servomoteur pour effectuer la rotation
 		return CDE_Servo_H(Angle);
 }
@@ -52,15 +52,16 @@ unsigned char FO_M3 (int Angle){
 // CDE_Servo_H
 //-----------------------------------------------------------------------------
 
-unsigned char CDE_Servo_H (int Angle){ //Angle de -90° à 90°
+unsigned int CDE_Servo_H (int Angle){ //Angle de -90° à 90°
 
 	dutycycle = ( (Angle*0.01)+0.6 )/35.4 ;	// HAUT/Periode
 	PWM=(dutycycle)*65536;
 
 	temps_deplacement = 0.21 * ( sqrt(pow(Angle,2)) - AncienAngle ) / 60; //En secondes, 0.21 = 0.21 sec/60° du servomoteur HS-422
+	temps_deplacement = temps_deplacement*1000 ;		//convertion en ms
 	AncienAngle = Angle;
 	
-	return (unsigned char)temps_deplacement;	//On retourne le temps que va mettre le servomoteur à se déplacer
+	return (unsigned int)temps_deplacement;	//On retourne le temps que va mettre le servomoteur à se déplacer
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +70,7 @@ unsigned char CDE_Servo_H (int Angle){ //Angle de -90° à 90°
 
 void configPCA (void) {
 //Gestion crossbar
-XBR0 |= 0x08; // enable CEX0 at good Port
+XBR0 |= 0x08; // enable CEX0 at P0.0
 
 // configuration du PCA
 PCA0MD = 0x00; // System clock divided by 12

@@ -8,9 +8,9 @@
 // Prototypes de Fonctions
 void configPCA (void);
 void PCA_ISR (void); // PCA Interrupt Service Routine
-unsigned char CDE_Servo_H (int );
+unsigned int CDE_Servo_H (int );
 void Init_FO_M3();
-unsigned char F0_M3(int );
+unsigned int F0_M3(int );
 
 
 

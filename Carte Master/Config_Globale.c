@@ -21,11 +21,8 @@ void Init_Device(void) ;
 //-----------------------------------------------------------------------------
 void Reset_Sources_Init()
 {
-	
 	 WDTCN = 0xDE;
 	 WDTCN = 0XAD;
-	
-
 }
 
 //-----------------------------------------------------------------------------
@@ -50,13 +47,26 @@ void Oscillator_Init_Quartz()
 
 void Port_IO_Init()
 {
-    // P0.0  -  Unassigned, Open-Drain, Digital
-    // P0.1  -  Unassigned, Open-Drain, Digital
-    // P0.2  -  Unassigned, Open-Drain, Digital
-    // P0.3  -  Unassigned,  Open-Drain, Digital
-    // P0.4  -  Unassigned,  Open-Drain, Digital
-    // P0.5  -  Unassigned,  Open-Drain, Digital
-    // P0.6  -  Unassigned,  Open-Drain, Digital
+//------ FOM1 -----------------
+    // P0.0  -  TX0, Push-Pull, Digital
+    // P0.1  -  RX0, Open-Drain, Digital
+		P0MDOUT   |=  0x01 ;
+		XBR0      |= 0x04 ;		//uart0 enable
+//------ FOM2 -------------------
+    // P0.2  -  TX1, Push-Pull, Digital
+    // P0.3  -  RX1,  Open-Drain, Digital
+		XBR2 |= 0x44 ;			//uart1 enable
+		P0MDOUT |= (1<<2) ;
+//------- FOM3 ---------------
+    // P0.4  -  Servo Horizontal,  Push-Pull, Digital
+    P0MDOUT |= (1<<4) ; // set P0.4 output state to push-pull
+//-------- FOM4 ----------------
+    // P0.5  -  TriggTélémètreAV,  Push-Pull, Digital
+    // P0.6  -  TriggTélémètreAR,  Push-Pull, Digital
+		// P3.6  -  ECHO_AV,  Open-Drain, Digital Input INT6
+    // P3.7  -  ECHO_AR,  Open-Drain, Digital Input INT7
+		P0MDOUT |= 0x60 ;			
+
     // P0.7  -  Unassigned,  Open-Drain, Digital
 
     // P1.0  -  Unassigned,  Open-Drain, Digital
@@ -83,34 +93,14 @@ void Port_IO_Init()
     // P3.3  -  Unassigned,  Open-Drain, Digital
     // P3.4  -  Unassigned,  Open-Drain, Digital
     // P3.5  -  Unassigned,  Open-Drain, Digital
-    // P3.6  -  Unassigned,  Open-Drain, Digital Input INT6
-    // P3.7  -  Unassigned,  Open-Drain, Digital Input INT7
+
 		
 		// P4.0 to P7.7   Unassigned,  Open-Drain, Digital
 		
 		// P4.0  -  RTS, , Digital  
 		// P4.1  -  CTS, , Digital
 		// Il reste a router GND, RX1, TX1 de l'uart1 sur le crossbar master selon les priorités
-		
 
-//------ FOM1 -----------------
-		P0MDOUT   |=  0x01;
-		XBR0      |= 0x04;
-		XBR2      |= 0x40;
-//------ FOM2 -------------------
-
-		XBR2 |= 0x44 ;			//uart1 enable
-		P0MDOUT |= (1<<2) ;
-
-//------- FOM3 ---------------
-    P0MDOUT |= (1<<4); // set P0.4 output state to push-pull
-
-//-------- FOM4 ----------------
-		P2MDOUT |= 0x1F;
-		
-		
-		
-		
 }
 
 //----------------------------------------------------------------------------------
@@ -124,13 +114,33 @@ void Config_SPI(void){
 
 }
 
+void Init_T3(void){
+		TMR3CN |= (1<<2) ;
+		TMR3 = 0xCC ;
+}
+
+void Delay_1ms(void){
+		int temp = TMR3 ;
+		while( (TMR3-temp) < 1851 ){}
+}
+
+void Delay(const int time_wait) {
+	int i;
+	for (i = 0; i < time_wait; i++)	{
+		Delay_1ms();
+	}
+}
+
+
 //----------------------------------------------------------------------------------
 void Init_Device(void){
 		Reset_Sources_Init();
 		Oscillator_Init_Quartz();
+		XBR2 |= 0x40 ;   							//crossbar enable
     Port_IO_Init();
 		EA = 1 ;											//enable all interrupts
 		Config_SPI();
+		Init_T3();
 }
 
 

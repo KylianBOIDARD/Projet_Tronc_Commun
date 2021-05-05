@@ -23,6 +23,7 @@ int vitesse_tempo = 0 ;
 int Coord_X_absolu = 0;
 int Coord_Y_absolu = 0;
 int Angle_absolu = 0;
+int Angle_relatif = 0 ;
 int commande_enable = 0;
 	
 /**
@@ -324,7 +325,8 @@ int traitement_commande()
 						commande.Pos_Coord_Y = cTOi(commande_a_decoder[indY+1]);
 						Coord_Y_absolu = commande.Pos_Coord_Y ;
 						commande.Pos_Angle = cTOi(commande_a_decoder[indA+1]);
-						Angle_absolu = commande.Pos_Angle ;
+						Angle_relatif = commande.Pos_Angle ;
+						Angle_absolu = Angle_relatif ; 
 						return 1;
 					}
 		}
@@ -340,9 +342,10 @@ int traitement_commande()
 			commande.DCT_Obst_Resolution = 30;
 			if((!strcmp(commande_a_decoder[1],"D")))
 			{
-				commande.Etat_Mouvement = oui_360;
+				commande.Etat_DCT_Obst = oui_360;
 				return 1;
 			}
+			return 1;
 		}
 		else if(!strcmp(commande_a_decoder[0],"MOB"))
 		{
@@ -353,7 +356,7 @@ int traitement_commande()
 			commande.DCT_Obst_Resolution = 30;
 			if(indD >= 0)
 			{
-				commande.Etat_Mouvement = oui_180;
+				commande.Etat_DCT_Obst = oui_180;
 				return 1;
 
 			}
@@ -362,6 +365,7 @@ int traitement_commande()
 				commande.DCT_Obst_Resolution = commande_a_decoder[indA+1];
 				return 1;
 			}
+			return 1 ;
 		}
 		else if(!strcmp(commande_a_decoder[0],"MOS"))
 		{

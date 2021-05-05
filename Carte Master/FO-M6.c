@@ -20,6 +20,10 @@ extern vitesse_tempo ;
 extern Coord_X_absolu ;
 extern Coord_Y_absolu ;
 extern Angle_absolu ;
+extern Angle_relatif ;
+const char taille_tab_mesures = 20 ;
+int tab_mesures[20] = {0} ; //initialise un tableau de distance
+char nb_mesures = 0 ;		//initialise le nb de mesures dans la tableau
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -162,11 +166,8 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 //------------------------------------------------------------------------------------
 			case Depl_Coord :
 //----------- CALCUL DE L'ANGLE DE DEPLACEMENT -----------------------------------
-					alpha = (180/PI)*atan2( command.Coord_Y, command.Coord_X );	//calcul de l'angle de triangle de déplacement au format trigo en degré
-					//si on est dans le cas du 1er dep, on check l'orientation initiale
-					if( (Coord_X_absolu == commande.Pos_Coord_X) && (Coord_Y_absolu == commande.Pos_Coord_Y) ){
-							alpha -= Angle_absolu ;
-					}
+					alpha = (180/PI)*atan2( command.Coord_X, command.Coord_Y );	//calcul de l'angle de triangle de déplacement au format trigo en degré
+					//alpha = alpha - Angle_relatif ; //convertion pour avoir l'angle réel de rotation par rapport à l'orientation de la base
 					x.Vitesse_Mot1 = 160*0.05 ;			//on initialise la vitesse	
 					x.Vitesse_Mot2 = 160*0.05 ;			//qui sera de 5% pour tout le déplacement
 					if(alpha < 0 ){		//si alpha négatif donc rotation à droite	
@@ -195,7 +196,7 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES command ){
 					while (FO_M2(x).Read_Pids != 0 ){} ;  //on attend la fin du dep
 //----------- ORIENTATION FINALE DE LA BASE SELON L'ANGLE DESIRE -------------------- 
 					alpha = commande.Angle - alpha ;	//calcul angle de déplacement pour arriver à l'orientation finale demandée
-					Angle_absolu += commande.Angle ;	//on calcul et stocke l'angle absolu de la base
+					//Angle_relatif = commande.Angle ; 	//on enregistre l'orientation de la base pour un prochain déplacement
 					if(alpha < 0 ){		//si alpha négatif donc rotation à droite	
 							x.Ticks_mot1 = -abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;					
 							x.Ticks_mot2 = abs( ((139*2*PI)*(float)alpha/360 )*3.312 )*0.7 ;
@@ -233,40 +234,49 @@ INFORMATIONS transform_infos( INFORMATIONS_SERIALIZER info_seria ){
 //---------------- Fonction transition commande Télémetres --------------------
 //------------------------------------------------------------------------------
 void command_Telemetre( void ){
-		char i = 0;			
-		int mesure = 0 ;	//initialise une variable pour stocker la distance de l'obstacle
-		int tab_mesures[15] = {0} ; //initialise un tableau de distance
-		char nb_mesures = 0 ;		//initialise le nb de mesures dans la tableau
+		char i = 0;
+		int temps_dep = 0 ;
+		int mesure = 0 ;	//initialise une variable pour stocker la distance de l'obstacle	
 		char angle = -90 ;  //angle de départ pour detect par balayage
-	
+		nb_mesures = 0 ;
+		for(i;i<taille_tab_mesures;i++){
+			tab_mesures[i] = 0 ;		//on vide le tableau des mesures précédentes
+    }
+		
 		switch (commande.Etat_DCT_Obst){
 			case oui_180:
 				if(commande.Type_DCT_Obst == DCT_unique){	
-						mesure = FO_M4('1') ;		//on demande une detection avant
+						mesure = FO_M4(1) ;		//on demande une detection avant
 						tab_mesures[nb_mesures] = mesure ;	//on stocke la detection
 						nb_mesures += 1 ;		//on incrémente le nb de mesures
 				}
 				if(commande.Type_DCT_Obst == DCT_balayage){
 						while (angle < 90){
-							/*temps = */FO_M3(angle) ;
-							//attendre que le servo soit en place, sauf si M3 le fait automatiquement
-							mesure = FO_M4('1') ;		//on demande une detection avant
-							//on doit recuperer les distances des obstacles détéctés,s'il y en a
-							//condition pour savoir si il y a eu detection ou non
-									//tab_mesures[nb_mesures] = mesure
-									//nb_mesures += 1 ;
-							angle += commande.DCT_Obst_Resolution ;	//on incrémente l'angle
-							
+							temps_dep = FO_M3(angle) ;
+							Delay(temps_dep);		//attend que le servo soit en position
+							mesure = FO_M4(1) ;		//on demande une detection avant
+							tab_mesures[nb_mesures] = mesure ;	//on stocke la detection
+							nb_mesures += 1 ;		//on incrémente le nb de mesures
+							angle += commande.DCT_Obst_Resolution ;	//on incrémente l'angle	
             }
 				}
 				if(commande.Type_DCT_Obst == DCT_balayage_plus_proche){
 				
 				}
+						//redirection de la structure infos vers le tableau de valeurs
+				infos.Tab_Val_Obst = &tab_mesures ;		//on fait pointer sur l'adresse de notre tableau de mesures
+				infos.Nbre_Val_obst = nb_mesures ;		//on set le nbr de mesures effectuées
+				infos.Etat_DCT_Obst = DCT_Obst_180_oui ;
 				break;
 			case oui_360:
 				if(commande.Type_DCT_Obst == DCT_unique){	
-						mesure = FO_M4('1') ;		//on demande une detection avant
-						mesure = FO_M4('2') ;		//on demande une detection arrière
+						mesure = FO_M4(1) ;		//on demande une detection avant
+						tab_mesures[nb_mesures] = mesure ;	//on stocke la detection
+						nb_mesures += 1 ;		//on incrémente le nb de mesures
+					
+						mesure = FO_M4(2) ;		//on demande une detection arrière
+						tab_mesures[nb_mesures] = mesure ;	//on stocke la detection
+						nb_mesures += 1 ;		//on incrémente le nb de mesures
 				}
 				if(commande.Type_DCT_Obst == DCT_balayage){
 						//meme principe que 180 en ajoutant detection arriere
@@ -274,19 +284,14 @@ void command_Telemetre( void ){
 				if(commande.Type_DCT_Obst == DCT_balayage_plus_proche){
 				
 				}
+						//redirection de la structure infos vers le tableau de valeurs
+				infos.Tab_Val_Obst = &tab_mesures ;		//on fait pointer sur l'adresse de notre tableau de mesures
+				infos.Nbre_Val_obst = nb_mesures ;		//on set le nbr de mesures effectuées
+				infos.Etat_DCT_Obst = DCT_Obst_360_oui ;
 				break;
 			default:
 				break;
 		}
-		//remplissage du tableau d'informations des valeurs de distance
-		for(i; i<= nb_mesures-1; i++)
-    {
-			infos.Tab_Val_Obst[i] = tab_mesures[i] ;
-    }
-		infos.Nbre_Val_obst = nb_mesures ;
-		infos.Etat_DCT_Obst = DCT_Obst_180_oui ;
-		
-		//return i ;
 }
 
 

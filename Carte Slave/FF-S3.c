@@ -12,7 +12,6 @@
 #include "c8051F020_SFR16.h"
 #include <string.h>
 #include <math.h>
-
 //-----------------------------------------------------------------------------
 // Global CONSTANTS
 //-----------------------------------------------------------------------------
@@ -23,9 +22,9 @@ sbit PWM_OUT = P0^0; // define PWM output port pin
 // Prototypes de Fonctions
 void configPCA (void);
 void PCA_ISR (void); // PCA Interrupt Service Routine
-unsigned char CDE_Servo_V (int Angle);
+unsigned char CDE_Servo_V (char Angle);
 void Init_FF_S3();
-char FF_S3(int Angle);
+char FF_S3(char Angle);
 
 //-----------------------------------------------------------------------------
 // Global VARIABLES
@@ -33,22 +32,20 @@ char FF_S3(int Angle);
 unsigned PWM = PWM_START; // Number of PCA clocks for waveform to be high
 // duty cycle = PWM / 65536 Note: this is a 16-bit value
 float AncienAngle = 0;
+float AngleConvert=10;	
 float temps_deplacement;
 float temps_rotation;
 float dutycycle;
-int i = 0;
-int Angle=90;
 
 //----- FONCTION INITIALISATION -----------------------------------------------
 void Init_FF_S3(void){
 	configPCA();
 	PWM_OUT=0;
-	CDE_Servo_V(90);
 }
 //-----------------------------------------------------------------------------
 
 //---- FONCTION PRINCIPALE DE FF-S3 -------------------------------------------
-char FF_S3 (int Angle){
+char FF_S3 (char Angle){
 		//Recoit l'angle en ASCII, retourne le temps mis par le servomoteur pour effectuer la rotation
 		return CDE_Servo_V(Angle);
 }
@@ -57,11 +54,12 @@ char FF_S3 (int Angle){
 // CDE_Servo_H
 //-----------------------------------------------------------------------------
 
-unsigned char CDE_Servo_V (int Angle){ //Angle ira de -90° à 90°
+unsigned char CDE_Servo_V (char Angle){ //Angle ira de -90° à 90°
 	dutycycle = ( (Angle*0.01)+0.6 )/35.4 ;	// HAUT/Periode
 	PWM=(dutycycle)*65536;
 
 	temps_deplacement = 0.21 * ( sqrt(pow(Angle,2)) - AncienAngle ) / 60; //En secondes, 0.21 = 0.21 sec/60° du servomoteur HS-422
+	temps_deplacement = temps_deplacement*1000 ;		//convertion en ms
 	AncienAngle = Angle;
 	
 	return (char)temps_deplacement;//On retourne le temps que va mettre le servomoteur à se déplacer
@@ -71,7 +69,7 @@ unsigned char CDE_Servo_V (int Angle){ //Angle ira de -90° à 90°
 //---- configPCA --------------------------------------------------------------
 void configPCA (void) {
 //Gestion crossbar
-XBR0 |= 0x08; // enable CEX0 at P0.0
+XBR0 = 0x08; // enable CEX0 at P0.0
 
 // configuration du PCA
 PCA0MD = 0x00; // System clock divided by 12

@@ -30,6 +30,7 @@ extern INFORMATIONS infos ;
 //------- Prototypes des fonctions ------------------------------
 //------- Initialisation Générale ---------------------
 void Init_Device(void);
+void Delay(const int time_wait);
 //----------- FO-M1 -----------------------------------
 void Init_FOM1(void);
 void FOM1(void);
@@ -38,7 +39,7 @@ INFORMATIONS_SERIALIZER FO_M2(COMMANDES_SERIALIZER);	//COMMANDES_SERIALIZER
 void Init_FOM2(void);
 //----------- FO-M3 -----------------------------------
 void Init_FO_M3(void);
-char FO_M3 (char);
+unsigned int FO_M3 (int) ;
 //----------- FO-M4 -----------------------------------
 void Init_FO_M4(void);
 int FO_M4(char ordre);
