@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 #define PWM_START 0x4000 // starting value for the PWM
 // high time
-sbit PWM_OUT = P0^4; // define PWM output port pin
+sbit PWM_OUT = P1^0; // define PWM output port pin
 //-----------------------------------------------------------------------------
 // Global VARIABLES
 //-----------------------------------------------------------------------------

@@ -11,16 +11,16 @@
 // Tool chain: KEIL Microvision 4
 //
 //-----------------------------------------------------------------------------
-//-------- Utilisation du télémètre Ultrasons ---------------------------------
+//-------- Utilisation du tï¿½lï¿½mï¿½tre Ultrasons ---------------------------------
 #include "FO-M4.h"
 
 //------------------------------------------------------------------------------
 //---------------- Initialisation des variables globales -----------------------
 //------------------------------------------------------------------------------
-sbit  TRIGGER_AV = P0^5 ; //Télémètre Avant Commande
-sbit	ECHO_AV = P3^6 ;		//Réponse AV
-sbit  TRIGGER_AR = P0^6 ; //Télémètre Arrière
-sbit	ECHO_AR = P3^7 ;		//Réponse AR
+sbit  TRIGGER_AV = P0^5 ; //Tï¿½lï¿½mï¿½tre Avant Commande
+sbit	ECHO_AV = P3^6 ;		//Rï¿½ponse AV
+sbit  TRIGGER_AR = P0^6 ; //Tï¿½lï¿½mï¿½tre Arriï¿½re
+sbit	ECHO_AR = P3^7 ;		//Rï¿½ponse AR
 
 void Delay(const int time_wait);
 
@@ -46,11 +46,11 @@ unsigned int   AV;*/
 void Init_FO_M4(void){
 	EIE2|=0x04; 			//enable T4 interruption
 	EIE2 |= (1<<4) ;  //enable intext6
-	P3IF |= (1<<2) ;	//déclenche sur front montant
+	P3IF |= (1<<2) ;	//dï¿½clenche sur front montant
 	EIE2 |= (1<<5) ;  //enable intext7
-	P3IF |= (1<<3) ;	//déclenche sur front montant
+	P3IF |= (1<<3) ;	//dï¿½clenche sur front montant
 	TRIGGER_AV = 0 ;	//initialise les signaux
-	TRIGGER_AR = 0 ;	//de commande des télémètres 
+	TRIGGER_AR = 0 ;	//de commande des tï¿½lï¿½mï¿½tres 
 
 }
 
@@ -77,12 +77,12 @@ void MES_Dist_AV (void) {
 	overflow = 0 ;
 	Trigger_AV();									//on demande la detection
 	while (attente_mesure == 0); 	//on attend que la reponse arrive
-	attente_mesure = 0 ;					//on est rentré dans l'int donc la mesure a commencée
+	attente_mesure = 0 ;					//on est rentrï¿½ dans l'int donc la mesure a commencï¿½e
 	while (ECHO_AV != 0); 					//tant qu'on est encore dans la mesure
 	T4CON = 0x00 ; 								//on coupe le T4
-	temps_mesure = (TH4<<8) + TL4 ;  		//on recupere le temps compté
+	temps_mesure = (TH4<<8) + TL4 ;  		//on recupere le temps comptï¿½
 	if( overflow == 1 || temps_mesure > 0xB4D8 ){	//si t4 overflow, donc que temp > 35ms ou que temps > 25ms
-		//la deuxieme condition est une sécurité, normalement c'est 25ms max ou alors 38ms
+		//la deuxieme condition est une sï¿½curitï¿½, normalement c'est 25ms max ou alors 38ms
 			distance = 0 ;
 	}
 	else{
@@ -100,12 +100,12 @@ void MES_Dist_AR (void) {
 	overflow = 0 ;
 	Trigger_AR();
 	while (attente_mesure == 0); 	//on attend que la reponse arrive
-	attente_mesure = 0 ;					//on est rentré dans l'int donc la mesure a commencée
+	attente_mesure = 0 ;					//on est rentrï¿½ dans l'int donc la mesure a commencï¿½e
 	while (ECHO_AR != 0); 				//tant qu'on est encore dans la mesure
 	T4CON = 0x00 ; 								//on coupe le T4
-	temps_mesure = (TH4<<8) + TL4 ;  		//on recupere le temps compté
+	temps_mesure = (TH4<<8) + TL4 ;  		//on recupere le temps comptï¿½
 	if( overflow == 1 || temps_mesure > 0xB4D8 ){	//si t4 overflow, donc que temp > 35ms ou que temps > 25ms
-		//la deuxieme condition est une sécurité, normalement c'est 25ms max ou alors 38ms
+		//la deuxieme condition est une sï¿½curitï¿½, normalement c'est 25ms max ou alors 38ms
 			distance = 0 ;
 	}
 	else{
@@ -119,22 +119,22 @@ void MES_Dist_AR (void) {
 void EXT6_int(void) interrupt 18{
 		T4CON = 0x04 ;				//on active Timer4 pour compter le temps a l'etat HAUT
 		P3IF &= ~(1<<6) ;			//remise a zero du flag
-		attente_mesure = 1 ;	//on indique qu'on a commencé a compter	
+		attente_mesure = 1 ;	//on indique qu'on a commencï¿½ a compter	
 }
 
 void EXT7_int(void) interrupt 19{
 		T4CON = 0x04 ;				//on active Timer4 pour compter le temps a l'etat HAUT
 		P3IF &= ~(1<<7) ;			//remise a zero du flag
-		attente_mesure = 1 ;	//on indique qu'on a commencé a compter	
+		attente_mesure = 1 ;	//on indique qu'on a commencï¿½ a compter	
 }
 
 void Timer4_int(void) interrupt 16{
-		T4CON &= ~(1<<7) ;	//remise à zéro du flag
+		T4CON &= ~(1<<7) ;	//remise ï¿½ zï¿½ro du flag
 		overflow = 1 ;
 }
 
 //------------------------------------------------------------------------------
-//-------- Fonction Génératrice de Signaux de Commande pour télémetre ----------
+//-------- Fonction Gï¿½nï¿½ratrice de Signaux de Commande pour tï¿½lï¿½metre ----------
 //------------------------------------------------------------------------------
 void Trigger_AV (void) {
 	TRIGGER_AV = 1;
@@ -151,7 +151,7 @@ void Trigger_AR (void) {
 //------------------------------------------------------------------------------
 unsigned int convert (int x) {
 	unsigned int dist = 0;
-	//le timer s'incrémente toutes les 0.54us
+	//le timer s'incrï¿½mente toutes les 0.54us
 	//Formule : distance (cm) = time(us)/58
 	dist = (x*0.54)/58;
 	return dist ;

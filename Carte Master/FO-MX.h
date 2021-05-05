@@ -53,5 +53,8 @@ INFORMATIONS_SERIALIZER transform_command_Seria( COMMANDES ) ;
 INFORMATIONS transform_infos( INFORMATIONS_SERIALIZER ) ;
 void command_Telemetre( void ) ;
 
+//----------- FO-MS1 -----------------------------------
+void send_slave(int);
+
 
 //--------------------------------------------------------------

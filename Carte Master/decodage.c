@@ -426,6 +426,7 @@ int traitement_commande()
 					commande.Lumiere_Nbre = cTOi(commande_a_decoder[indN+1]); 
 					return 1;
 				}
+				return 1 ;
 		}
 		else if(!strcmp(commande_a_decoder[0],"LS"))
 		{
